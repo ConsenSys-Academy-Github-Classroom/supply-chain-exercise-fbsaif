@@ -24,8 +24,8 @@ contract SupplyChain {
     uint sku;
     uint price;
     State state;
-    address payable seller;
-    address payable buyer;
+    address seller;
+    address buyer;
   }
   /* 
    * Events
@@ -67,7 +67,7 @@ contract SupplyChain {
     _;
     uint _price = items[_sku].price;
     uint amountToRefund = msg.value - _price;
-    items[_sku].buyer.transfer(amountToRefund);
+    payable(items[_sku].buyer).transfer(amountToRefund);
   }
 
   // For each of the following modifiers, use what you learned about modifiers
@@ -139,8 +139,8 @@ contract SupplyChain {
   //      sure the buyer is refunded any excess ether sent. 
   // 6. call the event associated with this function!
   function buyItem(uint sku) public payable forSale(sku) paidEnough(items[sku].price) checkValue(sku) {
-    items[sku].seller.transfer(items[sku].price);
-    items[sku].buyer.transfer(msg.value);
+    payable(items[sku].seller).transfer(items[sku].price);
+    payable(items[sku].buyer).transfer(msg.value);
     items[sku].buyer = msg.sender;
     items[sku].state = State.Sold;
 
